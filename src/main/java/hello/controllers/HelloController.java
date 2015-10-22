@@ -32,9 +32,7 @@ public class HelloController {
   /**
    * POST /greeting -> receive and process uploaded file contents and additional attributes.
    *
-   * @param greeting The uploaded file as Multipart file parameter in the
-   * HTTP request. The RequestParam name must be the same of the attribute
-   * "name" in the input tag with type file.
+   * @param greeting The uploaded Multipart file.
    *
    * @return An String reference to a Thymeleaf template.
    */
