@@ -9,10 +9,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 public class HelloController {
@@ -25,7 +30,7 @@ public class HelloController {
   }
 
   /**
-   * POST /greeting -> receive and locally save a file and process additional model attributes.
+   * POST /greeting -> receive and process uploaded file contents and additional attributes.
    *
    * @param greeting The uploaded file as Multipart file parameter in the
    * HTTP request. The RequestParam name must be the same of the attribute
@@ -37,24 +42,16 @@ public class HelloController {
   public String greetingSubmit(@RequestParam("uploadfile") MultipartFile uploadfile,
                                @ModelAttribute Greeting greeting,
                                Model model) {
-    try {
-      // Get the filename and build the local file path (be sure that the
-      // application have write permissions on such directory)
-      String filename = uploadfile.getOriginalFilename();
-      String directory = "/Users/amcii/devels/boot/uploaded_files";
-      String filepath = Paths.get(directory, filename).toString();
-
-      // Save the file locally
-      BufferedOutputStream stream =
-          new BufferedOutputStream(new FileOutputStream(new File(filepath)));
-      stream.write(uploadfile.getBytes());
-      stream.close();
+    final List<String> lines = new ArrayList<>();
+    try(BufferedReader buffer = new BufferedReader(new InputStreamReader(uploadfile.getInputStream()))) {
+      buffer.lines().forEach(lines::add);
+    } catch (IOException e) {
+      e.printStackTrace();
     }
-    catch (Exception e) {
-      System.out.println(e.getMessage());
-    }
+    lines.forEach(System.out::println);
     model.addAttribute("greeting", greeting);
     model.addAttribute("uptail", greeting.getDetail().toUpperCase());
+    model.addAttribute("lines", lines);
     return "result";
   }
 }
