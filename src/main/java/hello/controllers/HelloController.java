@@ -29,13 +29,6 @@ public class HelloController {
     return "greeting";
   }
 
-  /**
-   * POST /greeting -> receive and process uploaded file contents and additional attributes.
-   *
-   * @param greeting The uploaded Multipart file.
-   *
-   * @return An String reference to a Thymeleaf template.
-   */
   @RequestMapping(value = "/greeting", method = RequestMethod.POST)
   public String greetingSubmit(@RequestParam("uploadfile") MultipartFile uploadfile,
                                @ModelAttribute Greeting greeting,
