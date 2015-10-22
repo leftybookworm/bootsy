@@ -42,16 +42,15 @@ public class HelloController {
   public String greetingSubmit(@RequestParam("uploadfile") MultipartFile uploadfile,
                                @ModelAttribute Greeting greeting,
                                Model model) {
-    final List<String> lines = new ArrayList<>();
+    model.addAttribute("greeting", greeting);
+    model.addAttribute("uptail", greeting.getDetail().toUpperCase());
     try(BufferedReader buffer = new BufferedReader(new InputStreamReader(uploadfile.getInputStream()))) {
-      buffer.lines().forEach(lines::add);
+      List<String> lines = buffer.lines().collect(Collectors.toList());
+      lines.forEach(System.out::println);
+      model.addAttribute("lines", lines);
     } catch (IOException e) {
       e.printStackTrace();
     }
-    lines.forEach(System.out::println);
-    model.addAttribute("greeting", greeting);
-    model.addAttribute("uptail", greeting.getDetail().toUpperCase());
-    model.addAttribute("lines", lines);
     return "result";
   }
 }
